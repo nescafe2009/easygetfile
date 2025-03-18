@@ -1,9 +1,9 @@
 import { useState, useRef, FormEvent } from 'react';
-import { PaperAirplaneIcon } from '@heroicons/react/24/outline';
+import { PaperAirplaneIcon, XMarkIcon } from '@heroicons/react/24/outline';
 
 export default function TextArea() {
   const [text, setText] = useState<string>('');
-  const [savedText, setSavedText] = useState<string>('');
+  const [savedTexts, setSavedTexts] = useState<{id: number, content: string, timestamp: string}[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -19,19 +19,15 @@ export default function TextArea() {
     
     try {
       setIsLoading(true);
-      const response = await fetch('/api/notes', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ content: text }),
-      });
+      // 添加新的文本记录
+      const newText = {
+        id: Date.now(),
+        content: text,
+        timestamp: new Date().toLocaleString()
+      };
       
-      if (!response.ok) {
-        throw new Error('Failed to save text');
-      }
-      
-      setSavedText(text);
+      // 保持最新的三条记录
+      setSavedTexts(prev => [newText, ...prev].slice(0, 3));
       setText('');
       setError(null);
       
@@ -47,6 +43,11 @@ export default function TextArea() {
     }
   };
   
+  // 删除保存的文本
+  const handleDeleteText = (id: number) => {
+    setSavedTexts(prev => prev.filter(item => item.id !== id));
+  };
+  
   return (
     <div className="w-full bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
       <div className="p-4 border-b border-gray-100">
@@ -54,11 +55,26 @@ export default function TextArea() {
       </div>
       
       {/* 已保存的文本显示区域 */}
-      {savedText && (
+      {savedTexts.length > 0 && (
         <div className="p-4 bg-gray-50 border-b border-gray-100">
-          <h3 className="text-sm font-medium text-gray-600 mb-2">已保存的文本：</h3>
-          <div className="bg-white p-3 rounded border border-gray-200 text-sm text-gray-700 whitespace-pre-wrap">
-            {savedText}
+          <h3 className="text-sm font-medium text-gray-600 mb-2">最近保存的文本：</h3>
+          <div className="space-y-3">
+            {savedTexts.map((item) => (
+              <div key={item.id} className="bg-white p-3 rounded border border-gray-200 text-sm text-gray-700 whitespace-pre-wrap relative">
+                <div className="flex justify-between items-start mb-1">
+                  <span className="text-xs text-gray-500">
+                    {item.timestamp}
+                  </span>
+                  <button
+                    onClick={() => handleDeleteText(item.id)}
+                    className="text-gray-400 hover:text-red-500 p-1"
+                  >
+                    <XMarkIcon className="w-4 h-4" />
+                  </button>
+                </div>
+                {item.content}
+              </div>
+            ))}
           </div>
         </div>
       )}

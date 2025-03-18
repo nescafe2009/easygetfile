@@ -7,9 +7,15 @@ export interface FileItem {
   type: string;
 }
 
+export interface KeyValuePair {
+  key: string;
+  value: string;
+}
+
 export interface NoteItem {
   id: string;
-  content: string;
+  title: string;
+  items: KeyValuePair[];
   createdAt: string;
   updatedAt: string;
 } 

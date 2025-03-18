@@ -131,7 +131,7 @@ export default function FileBrowser() {
   };
   
   return (
-    <div className="w-full bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+    <div className="w-full bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 h-full flex flex-col">
       <div className="p-4 border-b border-gray-100 flex justify-between items-center">
         <h2 className="text-lg font-medium text-gray-800">文件浏览器</h2>
         <label className="flex items-center gap-2 px-3 py-1.5 bg-blue-500 text-white rounded-md cursor-pointer hover:bg-blue-600 transition-colors">
@@ -152,7 +152,7 @@ export default function FileBrowser() {
         </div>
       )}
       
-      <div className="max-h-[400px] overflow-y-auto p-2">
+      <div className="flex-1 overflow-y-auto p-2 min-h-[500px]">
         {isLoading ? (
           <div className="flex justify-center items-center h-32">
             <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
