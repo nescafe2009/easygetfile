@@ -5,7 +5,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { FileItem } from '@/types';
 
 const UPLOADS_DIR = path.join(process.cwd(), 'public', 'uploads');
-const FILES_FILE = path.join(process.cwd(), 'data', 'files.json');
 
 // 确保上传目录存在
 async function ensureUploadsDir() {
@@ -14,33 +13,6 @@ async function ensureUploadsDir() {
   } catch {
     await fs.mkdir(UPLOADS_DIR, { recursive: true });
   }
-}
-
-// 确保数据目录存在
-async function ensureDataDir() {
-  const dataDir = path.join(process.cwd(), 'data');
-  try {
-    await fs.access(dataDir);
-  } catch {
-    await fs.mkdir(dataDir, { recursive: true });
-  }
-}
-
-// 读取文件列表
-async function readFiles(): Promise<FileItem[]> {
-  try {
-    await ensureDataDir();
-    const data = await fs.readFile(FILES_FILE, 'utf-8');
-    return JSON.parse(data);
-  } catch {
-    return [];
-  }
-}
-
-// 保存文件列表
-async function saveFiles(files: FileItem[]) {
-  await ensureDataDir();
-  await fs.writeFile(FILES_FILE, JSON.stringify(files, null, 2));
 }
 
 // 获取文件列表
