@@ -4,28 +4,32 @@ import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import { NoteItem } from '@/types';
 
-const NOTES_FILE = path.join(process.cwd(), 'src', 'data', 'notes.json');
+const NOTES_FILE = path.join(process.cwd(), 'data', 'notes.json');
 
-// 确保笔记文件存在
-async function ensureNotesFile() {
+// 确保数据目录存在
+async function ensureDataDir() {
+  const dataDir = path.join(process.cwd(), 'data');
   try {
-    await fs.access(NOTES_FILE);
-  } catch (error) {
-    await fs.mkdir(path.dirname(NOTES_FILE), { recursive: true });
-    await fs.writeFile(NOTES_FILE, JSON.stringify([]));
+    await fs.access(dataDir);
+  } catch {
+    await fs.mkdir(dataDir, { recursive: true });
   }
 }
 
-// 读取所有笔记
+// 读取备忘数据列表
 async function readNotes(): Promise<NoteItem[]> {
-  await ensureNotesFile();
-  const data = await fs.readFile(NOTES_FILE, 'utf-8');
-  return JSON.parse(data);
+  try {
+    await ensureDataDir();
+    const data = await fs.readFile(NOTES_FILE, 'utf-8');
+    return JSON.parse(data);
+  } catch {
+    return [];
+  }
 }
 
-// 写入所有笔记
-async function writeNotes(notes: NoteItem[]) {
-  await ensureNotesFile();
+// 保存备忘数据列表
+async function saveNotes(notes: NoteItem[]) {
+  await ensureDataDir();
   await fs.writeFile(NOTES_FILE, JSON.stringify(notes, null, 2));
 }
 
@@ -66,7 +70,7 @@ export async function POST(request: NextRequest) {
     };
 
     notes.push(newNote);
-    await writeNotes(notes);
+    await saveNotes(notes);
 
     return NextResponse.json(newNote);
   } catch (error) {
@@ -108,7 +112,7 @@ export async function PUT(request: NextRequest) {
       updatedAt: new Date().toISOString(),
     };
 
-    await writeNotes(notes);
+    await saveNotes(notes);
     return NextResponse.json(notes[noteIndex]);
   } catch (error) {
     console.error('Error updating note:', error);
@@ -142,7 +146,7 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    await writeNotes(filteredNotes);
+    await saveNotes(filteredNotes);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting note:', error);

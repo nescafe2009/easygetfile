@@ -190,7 +190,7 @@ export default function NotesDisplay() {
       await navigator.clipboard.writeText(text);
       setCopySuccess('复制成功');
       setTimeout(() => setCopySuccess(null), 2000);
-    } catch (err) {
+    } catch {
       // 如果 clipboard API 不可用，尝试使用传统方法
       const textArea = document.createElement('textarea');
       textArea.value = text;
@@ -200,7 +200,7 @@ export default function NotesDisplay() {
         document.execCommand('copy');
         setCopySuccess('复制成功');
         setTimeout(() => setCopySuccess(null), 2000);
-      } catch (err) {
+      } catch {
         setError('复制失败，请手动复制');
       }
       document.body.removeChild(textArea);
@@ -348,8 +348,8 @@ export default function NotesDisplay() {
             <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
           </div>
         ) : notes.length === 0 ? (
-          <div className="text-center py-12 text-gray-500">
-            暂无备忘数据，请点击"新建备忘数据"按钮添加
+          <div className="text-sm text-gray-500 text-center py-4">
+            暂无备忘数据，点击&ldquo;新建备忘数据&rdquo;按钮添加
           </div>
         ) : (
           <ul className="divide-y divide-gray-100">
