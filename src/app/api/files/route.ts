@@ -11,7 +11,7 @@ const FILES_FILE = path.join(process.cwd(), 'data', 'files.json');
 async function ensureUploadsDir() {
   try {
     await fs.access(UPLOADS_DIR);
-  } catch (error) {
+  } catch {
     await fs.mkdir(UPLOADS_DIR, { recursive: true });
   }
 }
