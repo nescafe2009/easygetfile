@@ -3,13 +3,25 @@
 import FileBrowser from '@/components/FileBrowser';
 import TextArea from '@/components/TextArea';
 import NotesDisplay from '@/components/NotesDisplay';
+import Logo from '@/components/Logo';
+import { motion } from 'framer-motion';
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* 顶部导航栏 */}
-      <header className="bg-white shadow-sm h-14 flex items-center px-6 sticky top-0 z-10">
-        <h1 className="text-lg font-medium text-gray-800">EasyGetFile</h1>
+      <header className="bg-white shadow-md h-16 flex items-center px-6 sticky top-0 z-10 border-b border-blue-100">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Logo 
+            size={52} 
+            className="py-1" 
+            textColor="text-blue-600"
+          />
+        </motion.div>
       </header>
       
       {/* 主要内容区 */}

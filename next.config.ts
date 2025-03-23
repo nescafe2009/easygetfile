@@ -6,7 +6,11 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: '10mb',
     }
-  }
+  },
+  images: {
+    unoptimized: true,
+  },
+  output: 'standalone',
 };
 
 export default nextConfig;

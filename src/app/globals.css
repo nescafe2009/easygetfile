@@ -73,3 +73,17 @@ body {
   box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.2);
   border-color: var(--primary);
 }
+
+/* Logo闪光效果动画 */
+@keyframes shine {
+  0% {
+    transform: translateX(-100%) rotate(12deg);
+  }
+  100% {
+    transform: translateX(200%) rotate(12deg);
+  }
+}
+
+.animate-shine {
+  animation: shine 1s ease-in-out;
+}

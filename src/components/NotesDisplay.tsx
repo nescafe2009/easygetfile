@@ -1,6 +1,16 @@
-import { useState, useEffect, useRef, FormEvent } from 'react';
+import { useState, useEffect, useRef, FormEvent, ChangeEvent } from 'react';
 import { NoteItem, KeyValuePair } from '@/types';
-import { TrashIcon, PlusIcon, PaperAirplaneIcon, PencilIcon, ClipboardIcon, CheckIcon } from '@heroicons/react/24/outline';
+import { 
+  TrashIcon, 
+  PlusIcon, 
+  PaperAirplaneIcon, 
+  PencilIcon, 
+  ClipboardIcon, 
+  CheckIcon,
+  ArrowDownTrayIcon,
+  ArrowUpTrayIcon
+} from '@heroicons/react/24/outline';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function NotesDisplay() {
   const [notes, setNotes] = useState<NoteItem[]>([]);
@@ -207,19 +217,142 @@ export default function NotesDisplay() {
     }
   };
   
+  // 导出备忘数据为JSON文件
+  const exportNotes = () => {
+    try {
+      // 准备导出数据
+      const dataToExport = notes;
+      const jsonString = JSON.stringify(dataToExport, null, 2);
+      const blob = new Blob([jsonString], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      
+      // 创建下载链接
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `备忘数据_${new Date().toLocaleDateString().replace(/\//g, '-')}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // 清理URL对象
+      URL.revokeObjectURL(url);
+      
+      // 显示成功消息
+      setCopySuccess('导出成功');
+      setTimeout(() => setCopySuccess(null), 2000);
+    } catch (err) {
+      setError('导出失败');
+      console.error(err);
+    }
+  };
+  
+  // 导入备忘数据
+  const importNotes = async (e: ChangeEvent<HTMLInputElement>) => {
+    try {
+      const fileInput = e.target;
+      if (!fileInput.files || fileInput.files.length === 0) return;
+      
+      const file = fileInput.files[0];
+      
+      // 检查文件类型
+      if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
+        setError('请选择JSON格式的文件');
+        fileInput.value = '';
+        return;
+      }
+      
+      // 读取文件内容
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        try {
+          const content = event.target?.result as string;
+          const importedData = JSON.parse(content);
+          
+          // 验证导入的数据格式
+          if (!Array.isArray(importedData)) {
+            throw new Error('导入的文件格式不正确');
+          }
+          
+          // 为导入的数据添加新ID
+          const processedData = importedData.map(item => ({
+            ...item,
+            id: item.id || uuidv4(),
+            createdAt: item.createdAt || new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          }));
+          
+          // 发送导入数据到API
+          const response = await fetch('/api/notes/import', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ notes: processedData }),
+          });
+          
+          if (!response.ok) {
+            throw new Error('导入数据失败');
+          }
+          
+          // 刷新备忘数据
+          await fetchNotes();
+          
+          // 显示成功消息
+          setCopySuccess('导入成功');
+          setTimeout(() => setCopySuccess(null), 2000);
+        } catch (err) {
+          setError('导入失败: ' + (err instanceof Error ? err.message : '文件格式错误'));
+          console.error(err);
+        }
+      };
+      
+      reader.readAsText(file);
+      
+      // 重置文件输入
+      fileInput.value = '';
+    } catch (err) {
+      setError('导入失败');
+      console.error(err);
+    }
+  };
+  
   return (
     <div className="w-full bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 h-full flex flex-col">
       <div className="p-4 border-b border-gray-100 flex justify-between items-center">
         <h2 className="text-lg font-medium text-gray-800">备忘数据</h2>
-        {!isCreating && (
+        <div className="flex items-center gap-2">
+          {/* 导出按钮 */}
           <button
-            onClick={showCreateForm}
-            className="flex items-center gap-1 px-3 py-1.5 bg-blue-500 text-white text-sm rounded-md hover:bg-blue-600 transition-colors"
+            onClick={exportNotes}
+            className="flex items-center gap-1 px-3 py-1.5 bg-gray-100 text-gray-600 text-sm rounded-md hover:bg-gray-200 transition-colors"
+            title="导出备忘数据"
           >
-            <PlusIcon className="w-4 h-4" />
-            <span>新建备忘数据</span>
+            <ArrowDownTrayIcon className="w-4 h-4" />
+            <span>导出</span>
           </button>
-        )}
+          
+          {/* 导入按钮 */}
+          <label className="flex items-center gap-1 px-3 py-1.5 bg-gray-100 text-gray-600 text-sm rounded-md hover:bg-gray-200 transition-colors cursor-pointer" title="导入备忘数据">
+            <ArrowUpTrayIcon className="w-4 h-4" />
+            <span>导入</span>
+            <input
+              type="file"
+              accept=".json,application/json"
+              className="hidden"
+              onChange={importNotes}
+            />
+          </label>
+          
+          {!isCreating && (
+            <button
+              onClick={showCreateForm}
+              className="flex items-center gap-1 px-3 py-1.5 bg-blue-500 text-white text-sm rounded-md hover:bg-blue-600 transition-colors"
+            >
+              <PlusIcon className="w-4 h-4" />
+              <span>新建备忘数据</span>
+            </button>
+          )}
+        </div>
       </div>
       
       {error && (

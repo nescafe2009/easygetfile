@@ -8,7 +8,8 @@ import {
   MusicalNoteIcon, 
   CodeBracketIcon,
   ArrowUpTrayIcon,
-  XMarkIcon
+  XMarkIcon,
+  ArrowDownTrayIcon
 } from '@heroicons/react/24/outline';
 
 export default function FileBrowser() {
@@ -88,6 +89,25 @@ export default function FileBrowser() {
       await fetchFiles();
     } catch (err) {
       setError('文件删除失败');
+      console.error(err);
+    }
+  };
+  
+  // 处理文件下载
+  const handleDownload = (file: FileItem) => {
+    try {
+      // 使用专用的下载API端点
+      const downloadUrl = `/api/download/${encodeURIComponent(file.name)}`;
+      // 创建一个a标签用于下载
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = file.name; // 设置下载的文件名
+      link.setAttribute('target', '_blank');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      setError('文件下载失败');
       console.error(err);
     }
   };
@@ -184,12 +204,22 @@ export default function FileBrowser() {
                     </span>
                   </div>
                 </div>
-                <button
-                  onClick={() => handleDeleteFile(file.id)}
-                  className="text-gray-400 hover:text-red-500 p-1"
-                >
-                  <XMarkIcon className="w-5 h-5" />
-                </button>
+                <div className="flex items-center">
+                  <button
+                    onClick={() => handleDownload(file)}
+                    className="text-gray-400 hover:text-blue-500 p-1.5 mr-1"
+                    title="下载文件"
+                  >
+                    <ArrowDownTrayIcon className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => handleDeleteFile(file.id)}
+                    className="text-gray-400 hover:text-red-500 p-1.5"
+                    title="删除文件"
+                  >
+                    <XMarkIcon className="w-5 h-5" />
+                  </button>
+                </div>
               </li>
             ))}
           </ul>

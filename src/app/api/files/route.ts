@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     }
     
     const buffer = Buffer.from(await file.arrayBuffer());
-    const fileName = `${uuidv4()}-${file.name}`;
+    const fileName = file.name;
     const filePath = path.join(UPLOADS_DIR, fileName);
     
     await fs.writeFile(filePath, buffer);
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
     const stats = await fs.stat(filePath);
     const fileInfo: FileItem = {
       id: fileName,
-      name: file.name,
+      name: fileName,
       path: `/uploads/${fileName}`,
       size: stats.size,
       createdAt: new Date().toISOString(),

@@ -24,6 +24,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/logo.svg" />
+        <meta name="description" content="EasyGetFile - 一个简单的文件管理、文本和备忘录应用" />
+        <meta name="theme-color" content="#3b82f6" />
+        <meta property="og:title" content="EasyGetFile" />
+        <meta property="og:description" content="一个简单的文件管理、文本和备忘录应用，使用苹果设计风格" />
+        <meta property="og:image" content="/logo.svg" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

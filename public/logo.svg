@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景圆 -->
+  <circle cx="256" cy="256" r="250" fill="#f0f9ff" stroke="#3b82f6" stroke-width="14"/>
+  
+  <!-- 外环装饰 -->
+  <circle cx="256" cy="256" r="235" fill="none" stroke="#93c5fd" stroke-width="3" stroke-dasharray="5,8" opacity="0.6"/>
+  
+  <!-- 文件图标 -->
+  <g transform="translate(106, 106) scale(0.6)">
+    <!-- 文件底部 -->
+    <rect x="80" y="80" width="256" height="320" rx="20" ry="20" fill="#3b82f6"/>
+    
+    <!-- 文件上方折叠部分 -->
+    <path d="M80,100 L240,100 L240,160 L300,160 L300,380 C300,391 291,400 280,400 L100,400 C89,400 80,391 80,380 L80,100 Z" fill="#60a5fa"/>
+    
+    <!-- 文件折角 -->
+    <path d="M240,100 L300,160 L240,160 Z" fill="#93c5fd"/>
+    
+    <!-- 文件内部线条 -->
+    <line x1="120" y1="220" x2="260" y2="220" stroke="white" stroke-width="14" stroke-linecap="round"/>
+    <line x1="120" y1="260" x2="260" y2="260" stroke="white" stroke-width="14" stroke-linecap="round"/>
+    <line x1="120" y1="300" x2="200" y2="300" stroke="white" stroke-width="14" stroke-linecap="round"/>
+  </g>
+  
+  <!-- 下载箭头 -->
+  <g transform="translate(260, 256)">
+    <circle cx="0" cy="0" r="75" fill="#10b981" opacity="0.92"/>
+    <path d="M0,-40 L0,40 M-30,10 L0,40 L30,10" stroke="white" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
+  
+  <!-- 装饰元素 - 闪光点 -->
+  <circle cx="145" cy="145" r="8" fill="white" opacity="0.7"/>
+  <circle cx="380" cy="180" r="6" fill="white" opacity="0.5"/>
+  <circle cx="330" cy="370" r="8" fill="white" opacity="0.6"/>
+  
+  <!-- 文字标签 - 隐藏在视觉设计中，仅用于SVG功能性 -->
+  <text x="-1000" y="-1000" font-family="Arial, sans-serif" font-size="0.1" fill="none">EasyGetFile</text>
+</svg>
