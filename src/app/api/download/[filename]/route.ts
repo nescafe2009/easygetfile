@@ -9,7 +9,7 @@ export async function GET(
   { params }: { params: { filename: string } }
 ) {
   try {
-    const filename = decodeURIComponent(params.filename);
+    const filename = decodeURIComponent(await params.filename);
     const filePath = path.join(UPLOADS_DIR, filename);
     
     try {

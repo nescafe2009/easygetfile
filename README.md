@@ -68,3 +68,42 @@ easygetfile/
 ## 许可证
 
 MIT
+
+## Docker 部署
+
+本项目支持使用 Docker 进行部署，服务默认端口为 3001。
+
+### 使用 Docker Compose 部署（推荐）
+
+1. 确保已安装 Docker 和 Docker Compose
+2. 克隆本仓库到本地
+3. 在项目根目录下运行:
+
+```bash
+docker-compose up -d
+```
+
+4. 访问 http://localhost:3001 即可使用应用
+
+### 手动构建和运行
+
+1. 构建 Docker 镜像:
+
+```bash
+docker build -t easygetfile:latest .
+```
+
+2. 运行容器:
+
+```bash
+docker run -d -p 3001:3001 -v $(pwd)/data:/app/data -v $(pwd)/public/uploads:/app/public/uploads --name easygetfile easygetfile:latest
+```
+
+3. 访问 http://localhost:3001 使用应用
+
+### 数据持久化
+
+- 备忘录数据保存在 `./data` 目录中
+- 上传的文件保存在 `./public/uploads` 目录中
+
+这些目录通过 Docker 卷挂载到容器中，确保数据持久化。
